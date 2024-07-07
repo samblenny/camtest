@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: Copyright 2024 Sam Blenny
+
+.PHONY: all bundle list sync tty clean
+
 all:
 	@echo "build project bundle:    make bundle"
 	@echo "sync code to CIRCUITPY:  make sync"
@@ -20,6 +23,12 @@ sync: bundle
 	xattr -cr build/camtest
 	rsync -rcvO 'build/camtest/CircuitPython 9.x/' /Volumes/CIRCUITPY
 	sync
+
+# Start serial terminal at 115200 baud with no flow control (-fn) using the
+# serial device that happens to enumerate when I plug my Pi Pico into my mac.
+# It's very likely the device name may be different on other systems.
+tty:
+	screen -fn /dev/tty.usbmodem2201 115200
 
 clean:
 	rm -rf build

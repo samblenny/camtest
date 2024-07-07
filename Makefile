@@ -12,10 +12,14 @@ bundle:
 list:
 	unzip -l 'build/*.zip'
 
-# This is for copying current code to CIRCUITPY drive
+# This is for syncing current code and libraries to CIRCUITPY drive on macOS.
+# To use this on other operating systems, adjust the "/Volumes/CIRCUITPY" path
+# as needed. You might also want to read the rsync manual (try "man rsync" from
+# a Terminal shell on macOS or Linux).
 sync: bundle
-	xattr -cr build
-	rsync -rcvO --delete build/ /Volumes/CIRCUITPY/; sync
+	xattr -cr build/camtest
+	rsync -rcvO 'build/camtest/CircuitPython 9.x/' /Volumes/CIRCUITPY
+	sync
 
 clean:
 	rm -rf build

@@ -46,8 +46,8 @@ def main():
     # Configure the camera
     spi = SPI(clock=GP18, MOSI=GP19)
     i2c = I2C(GP5, GP4)  # I2C(SCL, SDA)
-    # shutter = DigitalInOut(GP22)
-    # shutter.switch_to_input(Pull.UP)  # active low
+    shutter = DigitalInOut(GP22)
+    shutter.switch_to_input(Pull.UP)  # active low
     cam = OV5640(
         i2c,
         vsync=GP0,
@@ -65,12 +65,22 @@ def main():
     gc()
     pxBuf = Bitmap(240, 240, 256)
     gc()
-    # Capture and print a frame every 2 seconds
+    # Capture and print a frame every 2 seconds. Press shutter button to stop
+    # capturing frames (I use this for making screenshots).
+    stop = False
     while True:
-        sleep(2)
+        for _ in range(20):
+            sleep(0.1)
+            if not shutter.value:
+                stop = True
+                break
+        if stop:
+            break
         cam.capture(pxBuf)
         ttyPrint(pxBuf)
         gc()
+    while True:
+        pass
 
 
 main()

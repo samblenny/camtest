@@ -23,10 +23,9 @@ from adafruit_ov5640 import (
     OV5640, OV5640_SIZE_96X96, OV5640_SIZE_240X240, OV5640_COLOR_GRAYSCALE
 )
 
-def free(print_=True):
+def gcCol():
     collect()
-    if print_:
-        print("mem_free", mem_free())
+    print("mem_free", mem_free())
 
 def ttyPrint(pxBuf):
     # Print pixel buffer using Unicode Block Element characters
@@ -41,8 +40,9 @@ def ttyPrint(pxBuf):
         print(''.join(s))
 
 def main():
-    gc = free
-    gc()
+    # Make a buffer to hold captured pixel data
+    gcCol()
+    pxBuf = Bitmap(240, 240, 256)
     # Configure the camera
     spi = SPI(clock=GP18, MOSI=GP19)
     i2c = I2C(GP5, GP4)  # I2C(SCL, SDA)
@@ -61,10 +61,7 @@ def main():
     )
     cam.flip_x = True
     cam.colorspace = OV5640_COLOR_GRAYSCALE
-    # Make a buffer to hold captured pixel data
-    gc()
-    pxBuf = Bitmap(240, 240, 256)
-    gc()
+    gcCol()
     # Capture and print a frame every 2 seconds. Press shutter button to stop
     # capturing frames (I use this for making screenshots).
     stop = False
@@ -78,7 +75,7 @@ def main():
             break
         cam.capture(pxBuf)
         ttyPrint(pxBuf)
-        gc()
+        gcCol()
     while True:
         pass
 
